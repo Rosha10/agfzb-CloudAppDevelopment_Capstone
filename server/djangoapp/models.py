@@ -1,11 +1,9 @@
-from pydoc import describe
+import datetime
 from unicodedata import name
 from unittest.util import _MAX_LENGTH
 from django.db import models
-from django.utils.timezone import now
-from django.db import models
 from django.core import serializers
-from django.utils.timezone import now
+
 import uuid
 import json
 
@@ -36,31 +34,39 @@ class CarMake(models.Model):
 # - __str__ method to print a car make object
 
 class CarModel(models.Model):
-    id = models.IntegerField(default=1,primary_key=True)
-    name = models.CharField(null=False, max_length=100, default='Car')
-   
-    SEDAN = 'Sedan'
-    SUV = 'SUV'
-    WAGON = 'Wagon'
-    MINIVAN = 'Minivan'
-    CAR_TYPES = [
-        (SEDAN, 'Sedan'),
-        (SUV, 'SUV'),
-        (WAGON, 'Wagon'),
-        (MINIVAN, 'Minivan')
-    ]
+    car_make = models.ForeignKey(CarMake, null=True, on_delete=models.CASCADE)
+    name = models.CharField(null=False, max_length=50)
+    #dealer_id = models.IntegerField(null=True)
+    dealer_id = models.IntegerField(default=1,primary_key=True)
 
-    type = models.CharField(
-        null=False,
-        max_length=50,
-        choices=CAR_TYPES,
-        default=SEDAN
-    )
-    make = models.ForeignKey(CarMake, on_delete=models.CASCADE)
-    year = models.DateField(default=now)
+    SEDAN = "Sedan"
+    SUV = "SUV"
+    WAGON = "Wagon"
+    SPORT = "Sport"
+    COUPE = "Coupe"
+    MINIVAN = "Mini"
+    VAN = "Van"
+    PICKUP = "Pickup"
+    TRUCK = "Truck"
+    BIKE = "Bike"
+    SCOOTER = "Scooter"
+    OTHER = "Other"
+    CAR_CHOICES = [(SEDAN, "Sedan"), (SUV, "SUV"), (WAGON, "Station wagon"), (SPORT, "Sports Car"),
+                   (COUPE, "Coupe"), (MINIVAN, "Mini van"), (VAN,
+                                                             "Van"), (PICKUP, "Pick-up truck"),
+                   (TRUCK, "Truck"), (BIKE, "Motor bike"), (SCOOTER, "Scooter"), (OTHER, 'Other')]
+    model_type = models.CharField(
+        null=False, max_length=15, choices=CAR_CHOICES, default=SEDAN)
+
+    YEAR_CHOICES = []
+    for r in range(1969, (datetime.datetime.now().year+1)):
+        YEAR_CHOICES.append((r, r))
+
+    year = models.IntegerField(
+        ('year'), choices=YEAR_CHOICES, default=datetime.datetime.now().year)
 
     def __str__(self):
-        return "Name: " + self.name
+        return self.name + ", " + str(self.year) + ", " + self.model_type
 
 
 # <HINT> Create a plain Python class `CarDealer` to hold dealer data
@@ -102,3 +108,6 @@ class DealerReview:
         self.car_year = ""
         self.sentiment = ""
         self.id = ""
+
+    def __str__(self):
+        return "Reviewer: " + self.name + " Review: " + self.review
