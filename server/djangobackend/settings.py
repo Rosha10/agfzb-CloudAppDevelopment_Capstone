@@ -27,7 +27,7 @@ DEBUG = True
 
 APPEND_SLASH = True
 
-ALLOWED_HOSTS = ["bestcarsdjangoapp.us-east.cf.appdomain.cloud","localhost"]
+ALLOWED_HOSTS = ["bestcarsdjangoapp.us-east.cf.appdomain.cloud","localhost","127.0.0.1"]
 
 
 # Application definition
